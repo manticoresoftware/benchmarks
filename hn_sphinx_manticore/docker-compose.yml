@@ -1,0 +1,29 @@
+version: '2.1'
+services:
+  hn_manticore:
+    build:
+      context: .
+      dockerfile: Dockerfile_manticore
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    expose:
+      - 9306
+    container_name: "hn_manticore"
+  hn_sphinx:
+    build:
+      context: .
+      dockerfile: Dockerfile_sphinx 
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    expose:
+      - 9306
+    container_name: "hn_sphinx"
+  hn_test:
+    build:
+      context: test
+    container_name: "hn_test"
+
