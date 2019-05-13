@@ -10,7 +10,7 @@ ENV SPHINX_VERSION 3.1.1-612d99f
 #RUN apk add --no-cache mariadb-connector-c-dev wget
 RUN apt-get update && apt-get install -y mariadb-server postgresql-server-dev-10 expat wget
 
-RUN wget http://sphinxsearch.com/files/sphinx-${SPHINX_VERSION}-linux-amd64-musl.tar.gz -O /tmp/sphinxsearch.tar.gz
+RUN wget http://sphinxsearch.com/files/sphinx-${SPHINX_VERSION}-linux-amd64.tar.gz -O /tmp/sphinxsearch.tar.gz
 RUN cd /root && tar -xf /tmp/sphinxsearch.tar.gz
 RUN rm /tmp/sphinxsearch.tar.gz
 
