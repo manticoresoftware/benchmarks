@@ -26,7 +26,7 @@ echo "TEST 7: - 4 terms from groups 100-200 300-400 500-600 800-900"
 echo "1000x 100-200 300-400 500-600 800-900" > queries_test.txt; php generate_queries.php queries_test.txt hn_top.txt|sort -R|uniq > q.txt; for engine in sphinx manticore; do php test.php --plugin=plain.php -b=100 --data=q.txt -c=1 --host=hn_$engine --port=9306 --index=full --csv --tag=${engine}; done;
 
 echo "TEST 8: - 5 terms from groups 100-200 300-400 500-600 800-900 900-1000"
-echo "1000x 100-200 400-500 800-900" > queries_test.txt; php generate_queries.php queries_test.txt hn_top.txt|sort -R|uniq > q.txt; for engine in sphinx manticore; do php test.php --plugin=plain.php -b=100 --data=q.txt -c=1 --host=hn_$engine --port=9306 --index=full --csv --tag=${engine}; done;
+echo "1000x 100-200 300-400 500-600 800-900 900-1000" > queries_test.txt; php generate_queries.php queries_test.txt hn_top.txt|sort -R|uniq > q.txt; for engine in sphinx manticore; do php test.php --plugin=plain.php -b=100 --data=q.txt -c=1 --host=hn_$engine --port=9306 --index=full --csv --tag=${engine}; done;
 
 echo "TEST 9: - 3 AND terms from groups 300-600 and 1 NOT from 300-400"
 echo "1000x 300-600 300-600 300-600 -300-400" > queries_test.txt; php generate_queries.php queries_test.txt hn_top.txt|sort -R|uniq > q.txt; for engine in sphinx manticore; do php test.php --plugin=plain.php -b=100 --data=q.txt -c=1 --host=hn_$engine --port=9306 --index=full --csv --tag=${engine}; done;
