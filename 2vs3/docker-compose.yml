@@ -1,0 +1,29 @@
+version: '2.1'
+services:
+  hn_manticore2:
+    build:
+      context: .
+      dockerfile: Dockerfile_manticore2
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    expose:
+      - 9306
+    container_name: "hn_manticore2"
+  hn_manticore3:
+    build:
+      context: .
+      dockerfile: Dockerfile_manticore3
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    expose:
+      - 9306
+    container_name: "hn_manticore3"
+  hn_test:
+    build:
+      context: test
+    container_name: "hn_test_2vs3"
+

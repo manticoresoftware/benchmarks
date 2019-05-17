@@ -1,0 +1,21 @@
+FROM python:2.7-alpine as csv
+RUN pip install --upgrade pip setuptools csvkit
+RUN wget https://zenodo.org/record/45901/files/hacker_news_comments.csv?download=1 -O hacker_news_comments.csv
+RUN tr < hacker_news_comments.csv -d '\000' > hacker_news_comments_cleaned.csv
+RUN for n in `seq 1 10`; do echo $n; cat hacker_news_comments_cleaned.csv >> hacker_news_comments.10x.csv; done;
+RUN csvcut -e utf-8 -l -c 0,1,3,4,5,6,7,8,9,10 hacker_news_comments.10x.csv > hacker_news_comments.prepared.csv
+
+FROM manticoresearch/manticore as index
+WORKDIR /root/
+COPY --from=csv /hacker_news_comments.prepared.csv .
+COPY manticore.conf /root/
+RUN /usr/bin/indexer -c /root/manticore.conf --all
+RUN rm hacker_news_comments.prepared.csv
+
+FROM index as searchd
+COPY manticore_searchd.conf /root/manticore.conf
+RUN ln -sv /dev/stdout /root/query.log
+RUN ln -sv /dev/stdout /root/searchd.log
+VOLUME /root
+CMD ["/usr/bin/searchd", "-c", "/root/manticore.conf", "--nodetach", "--force-preread", "--iostats"]
+
