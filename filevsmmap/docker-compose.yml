@@ -1,0 +1,29 @@
+version: '2.1'
+services:
+  hn_manticore2:
+    build:
+      context: .
+      dockerfile: Dockerfile_manticore_default
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    expose:
+      - 9306
+    container_name: "hn_manticore_default"
+  hn_manticore3:
+    build:
+      context: .
+      dockerfile: Dockerfile_manticore_mmap
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    expose:
+      - 9306
+    container_name: "hn_manticore_mmap"
+  hn_test:
+    build:
+      context: test
+    container_name: "hn_test_file_vs_mmap"
+
