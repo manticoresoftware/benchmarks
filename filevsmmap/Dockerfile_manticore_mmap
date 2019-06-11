@@ -5,58 +5,15 @@ RUN tr < hacker_news_comments.csv -d '\000' > hacker_news_comments_cleaned.csv
 RUN for n in `seq 1 10`; do echo $n; cat hacker_news_comments_cleaned.csv >> hacker_news_comments.10x.csv; done;
 RUN csvcut -e utf-8 -l -c 0,1,3,4,5,6,7,8,9,10 hacker_news_comments.10x.csv > hacker_news_comments.prepared.csv
 
-FROM ubuntu:bionic as builder
-
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y \
-    libmysqlclient-dev \
-    libexpat-dev \
-    libpq-dev \
-    unixodbc-dev \
-    flex \
-    bison \
-    git \
-    build-essential \
-    libssl-dev \
-    libboost-system-dev \
-    libboost-program-options-dev \
-&& rm -rf /var/lib/apt/lists/*
-
-# add cmake as separate layer
-# file taken from https://github.com/Kitware/CMake/releases/download/v3.14.0/cmake-3.14.0-Linux-x86_64.tar.gz
-ADD cmake-3.14.0-Linux-x86_64.tar.gz /
-ENV PATH $PATH:/cmake-3.14.0-Linux-x86_64/bin
-
-RUN cd /tmp && git clone https://github.com/manticoresoftware/manticore.git manticore \
-&& cd manticore && git checkout manticore-2.8.2 && mkdir build && cd build
-
-RUN cd /tmp/manticore/build && cmake \
-    -D SPLIT_SYMBOLS=1 \
-    -D WITH_MYSQL=ON \
-    -D WITH_PGSQL=ON \
-    -D WITH_RE2=ON \
-    -D WITH_STEMMER=ON \
-    -D DISABLE_TESTING=ON \
-    -D CMAKE_INSTALL_PREFIX=/ \
-    -D CONFFILEDIR=/etc/sphinxsearch \
-    -D SPHINX_TAG=release .. \
-&& make -j4 install
-
-FROM ubuntu:bionic as searchd	
-RUN apt-get update && apt-get install -y mysql-client curl
-
-COPY --from=builder /bin/indexer /usr/bin/
-COPY --from=builder /bin/indextool /usr/bin/
-COPY --from=builder /bin/searchd /usr/bin/
-
+FROM manticoresearch/manticore as index
 WORKDIR /root/
 COPY --from=csv /hacker_news_comments.prepared.csv .
-
-COPY manticore_mmap.conf /root/manticore_mmap.conf
+COPY manticore_mmap.conf /root/
 RUN /usr/bin/indexer -c /root/manticore_mmap.conf --all
 RUN rm hacker_news_comments.prepared.csv
 
-
+FROM index as searchd
+COPY manticore_mmap.conf /root/manticore_mmap.conf
 RUN ln -sv /dev/stdout /root/query.log
 RUN ln -sv /dev/stdout /root/searchd.log
 VOLUME /root
