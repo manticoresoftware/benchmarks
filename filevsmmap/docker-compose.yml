@@ -1,6 +1,6 @@
 version: '2.1'
 services:
-  hn_manticore2:
+  hn_manticore_default:
     build:
       context: .
       dockerfile: Dockerfile_manticore_default
@@ -11,7 +11,7 @@ services:
     expose:
       - 9306
     container_name: "hn_manticore_default"
-  hn_manticore3:
+  hn_manticore_mmap:
     build:
       context: .
       dockerfile: Dockerfile_manticore_mmap
