@@ -9,7 +9,7 @@ FROM manticoresearch/manticore as index
 WORKDIR /root/
 COPY --from=csv /hacker_news_comments.prepared.csv .
 COPY manticore_default.conf /root/
-RUN /usr/bin/indexer -c manticore_default.conf --all
+RUN indexer -c manticore_default.conf --all
 RUN rm hacker_news_comments.prepared.csv
 
 FROM index as searchd
@@ -17,5 +17,5 @@ COPY manticore_default.conf /root/manticore_default.conf
 RUN ln -sv /dev/stdout /root/query.log
 RUN ln -sv /dev/stdout /root/searchd.log
 VOLUME /root
-CMD ["/usr/bin/searchd", "-c", "/root/manticore_default.conf", "--nodetach", "--force-preread", "--iostats"]
+CMD ["searchd", "-c", "/root/manticore_default.conf", "--nodetach", "--force-preread", "--iostats"]
 
