@@ -17,5 +17,5 @@ COPY manticore_default.conf /root/manticore_default.conf
 RUN ln -sv /dev/stdout /root/query.log
 RUN ln -sv /dev/stdout /root/searchd.log
 VOLUME /root
-CMD ["searchd", "-c", "/root/manticore_default.conf", "--nodetach", "--force-preread", "--iostats"]
+CMD ["/bin/searchd", "-c", "/root/manticore_default.conf", "--nodetach", "--force-preread", "--iostats"]
 
