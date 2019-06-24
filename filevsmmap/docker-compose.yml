@@ -11,6 +11,8 @@ services:
     expose:
       - 9306
     container_name: "hn_manticore_default"
+    mem_limit: 734003200
+    mem_swappiness: 0
   hn_manticore_mmap:
     build:
       context: .
@@ -22,6 +24,8 @@ services:
     expose:
       - 9306
     container_name: "hn_manticore_mmap"
+    mem_limit: 734003200
+    mem_swappiness: 0
   hn_test:
     build:
       context: test
