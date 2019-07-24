@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "TEST 1: Top 1000 frequent terms from HackerNews collection"
+echo "TEST 1: Top 1000 frequent terms from HackerNews collection (+ filter by attributes)"
 for engine in manticore_default manticore_mmap; do
     echo "===================== Testing $engine ====================="
     time (for n in `head -1000 hn_top.txt|awk '{print $1}'`; do
@@ -7,7 +7,7 @@ for engine in manticore_default manticore_mmap; do
     done)
 done
 
-echo "TEST 2: Top 1000 frequent terms from HackerNews colleciton by groups (top 1-50, top 50-100 etc.)"
+echo "TEST 2: Top 1000 frequent terms from HackerNews colleciton by groups (top 1-50, top 50-100 etc.). Filtering by comments."
 for type in 1-50 50-100 100-150 150-200 200-250 250-300 300-350 350-400 400-450 450-500 500-550 550-600 600-650 650-700 700-750 750-800 800-850 850-900 900-950 950-1000; do echo "200x $type" > queries_test.txt; php generate_queries.php queries_test.txt hn_top.txt|sort -R|uniq > q.txt; for engine in manticore_mmap manticore_default; do php test.php --plugin=plain.php -b=100 --data=q.txt -c=1 --host=hn_$engine --port=9306 --index=full --csv --tag=${engine}_${type} --filter="story_comment_count>=8"; done; done;
 
 echo "TEST 3: Top 1000 frequent terms from HackerNews colleciton by groups + 1 term from group 1-100"
