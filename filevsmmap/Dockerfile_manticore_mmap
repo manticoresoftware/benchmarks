@@ -17,5 +17,4 @@ COPY manticore_mmap.conf /root/manticore_mmap.conf
 RUN ln -sv /dev/stdout /root/query.log
 RUN ln -sv /dev/stdout /root/searchd.log
 VOLUME /root
-CMD ["/bin/searchd", "-c", "/root/manticore_mmap.conf", "--nodetach", "--force-preread", "--iostats"]
-
+CMD ["/usr/bin/searchd", "-c", "/root/manticore_mmap.conf", "--nodetach", "--force-preread", "--iostats"]
