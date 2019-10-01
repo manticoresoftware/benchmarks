@@ -1,0 +1,41 @@
+version: '2.2'
+services:
+  hn_manticore_default:
+    build:
+      context: .
+      dockerfile: Dockerfile_manticore_default
+    ports:
+      - "9306:9306"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    expose:
+      - 9306
+    container_name: "hn_manticore_default"
+    mem_limit: 482344960
+    mem_swappiness: 0
+    cap_add:
+      - IPC_LOCK
+  hn_manticore_mlock:
+    build:
+      context: .
+      dockerfile: Dockerfile_manticore_mlock
+    ports:
+      - "9307:9306"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    expose:
+      - 9306
+    container_name: "hn_manticore_mlock"
+    mem_limit: 482344960
+    mem_swappiness: 0
+    cap_add:
+      - IPC_LOCK
+  hn_test:
+    build:
+      context: test
+    container_name: "hn_test_file_vs_mlock"
+
